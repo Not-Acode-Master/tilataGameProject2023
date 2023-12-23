@@ -1,4 +1,5 @@
 import pygame
+from fighter import Fighter
 
 pygame.init()
 
@@ -16,6 +17,10 @@ bg_image = pygame.image.load("assets/images/background/background.jpg").convert_
 def draw_bg():
     scaled_bg = pygame.transform.scale(bg_image, (SCREEN_WIDHT, SCREEN_HEIGHT))
     screen.blit(scaled_bg, (0, 0))
+    
+#create two instances of fighters
+fighter_1 = Fighter(200, 310)
+fighter_2 = Fighter(700, 310)
 
 #game loop
 run = True
@@ -23,6 +28,10 @@ while run:
     
     #draw background
     draw_bg()
+    
+    #draw fighters
+    fighter_1.draw(screen)
+    fighter_2.draw(screen)
     
     #event handler
     for event in pygame.event.get():
