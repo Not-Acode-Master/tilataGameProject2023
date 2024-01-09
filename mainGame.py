@@ -88,12 +88,14 @@ while run:
     #show player stats
     draw_health_bar(fighter_1.health, 20, 20)
     draw_health_bar(fighter_2.health, 580, 20)
+    draw_text("P1: " + str(score[0]), score_font, RED, 20, 60)
+    draw_text("P2: " + str(score[1]), score_font, RED, 580, 60)
     
     #update countdown
     if intro_count <= 0:
         #move fighters
-        fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_2)
-        fighter_2.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1)
+        fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_2, round_over)
+        fighter_2.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1, round_over)
     else:
         #display count timera
         draw_text(str(intro_count), count_font, RED, SCREEN_WIDHT / 2, SCREEN_HEIGHT / 3)
@@ -125,7 +127,7 @@ while run:
          screen.blit(victory_img, (360, 150))
          if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
             round_over = False
-            intro_count = 3
+            intro_count = 4
             fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
             fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
     
