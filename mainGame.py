@@ -1,6 +1,8 @@
 import pygame
+from pygame import mixer
 from fighter import Fighter
 
+mixer.init()
 pygame.init()
 
 #Create game window
@@ -35,6 +37,17 @@ WIZARD_SIZE = 250
 WIZARD_SCALE = 3
 WIZARD_OFFSET = [112, 107]
 WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
+
+#load music and sounds
+pygame.mixer.music.load("assets/audio/music.mp3")
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.play(-1, 0.0, 5000)
+sword_fx = pygame.mixer.Sound("assets/audio/sword.wav")
+sword_fx.set_volume(0.5)
+magic_fx = pygame.mixer.Sound("assets/audio/magic.wav")
+magic_fx.set_volume(0.5)
+
+
 
 #load background image
 bg_image = pygame.image.load("assets/images/background/background.jpg").convert_alpha()
@@ -73,8 +86,8 @@ def draw_health_bar(health, x, y):
     
     
 #create two instances of fighters
-fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
+fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
 
 #game loop
 run = True
@@ -93,9 +106,9 @@ while run:
     
     #update countdown
     if intro_count <= 0:
-        #move fighters
-        fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_2, round_over)
-        fighter_2.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1, round_over)
+        #move figher
+        fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_2, round_over, sword_fx)
+        fighter_2.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1, round_over, magic_fx)
     else:
         #display count timera
         draw_text(str(intro_count), count_font, RED, SCREEN_WIDHT / 2, SCREEN_HEIGHT / 3)
