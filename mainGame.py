@@ -1,6 +1,7 @@
 import pygame
 from pygame import mixer
 from fighter import Fighter
+from menu import pauseMenu
 
 mixer.init()
 pygame.init()
@@ -37,6 +38,9 @@ WIZARD_SIZE = 250
 WIZARD_SCALE = 3
 WIZARD_OFFSET = [112, 107]
 WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
+
+#Define menu variables
+
 
 #load music and sounds
 pygame.mixer.music.load("assets/audio/music.mp3")
@@ -89,11 +93,18 @@ def draw_health_bar(health, x, y):
 fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
 fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
 
+#menu instanes
+menu1 = pauseMenu(False)
+
 #game loop
 run = True
 while run:
     
     clock.tick(FPS)
+    
+    #update menu state
+    menu1.aditionalControls()
+    menu1.update()
     
     #draw background
     draw_bg()
@@ -104,11 +115,12 @@ while run:
     draw_text("P1: " + str(score[0]), score_font, RED, 20, 60)
     draw_text("P2: " + str(score[1]), score_font, RED, 580, 60)
     
-    #update countdown
+    #update countdown 
     if intro_count <= 0:
         #move figher
-        fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_2, round_over, sword_fx)
-        fighter_2.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1, round_over, magic_fx)
+        if menu1.paused == False:
+            fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_2, round_over, sword_fx)
+            fighter_2.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1, round_over, magic_fx)
     else:
         #display count timera
         draw_text(str(intro_count), count_font, RED, SCREEN_WIDHT / 2, SCREEN_HEIGHT / 3)
@@ -120,6 +132,7 @@ while run:
     #update fighters
     fighter_1.update()
     fighter_2.update()
+    
     
     #draw fighters
     fighter_1.draw(screen)
