@@ -56,6 +56,7 @@ magic_fx.set_volume(0.5)
 
 #load background image
 bg_image = pygame.image.load("assets/images/background/background.jpg").convert_alpha()
+paused_menu_img = pygame.image.load("assets/images/background/pauseMenuBg.png").convert_alpha()
 
 #load spriitheets
 warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").convert_alpha()
@@ -63,6 +64,7 @@ wizard_sheet = pygame.image.load("assets/images/wizard/Sprites/wizard.png").conv
 
 #load victory image
 victory_img = pygame.image.load("assets/images/icons/victory.png").convert_alpha()
+pause_text_img = pygame.image.load("assets/images/icons/pauseText.png").convert_alpha()
 
 #load buttons with its instances
 play_button_img = pygame.image.load("assets/images/buttons/play.png").convert_alpha()
@@ -99,11 +101,11 @@ fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANI
 fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
 
 #create button instances
-play_button = Button(300, 120, play_button_img, 4)
-quit_button = Button(300, 210, quit_button_img, 4)
+play_button = Button(SCREEN_WIDHT/2 - 2 * play_button_img.get_width(), 170, play_button_img, 4)
+quit_button = Button(SCREEN_WIDHT/2 - 2 * play_button_img.get_width(), 300, quit_button_img, 4)
 
 #menu instanes
-menu1 = pauseMenu(False, RED, screen, play_button, quit_button)
+menu1 = pauseMenu(False, RED, screen, play_button, quit_button, paused_menu_img, SCREEN_WIDHT, SCREEN_HEIGHT, pause_text_img)
 
 #game loop
 run = True
@@ -126,6 +128,7 @@ while run:
     
     #check if the game is paused
     if menu1.paused == False:
+        
         #draw background
         draw_bg()
         
@@ -135,10 +138,13 @@ while run:
         draw_text("P1: " + str(score[0]), score_font, RED, 20, 60)
         draw_text("P2: " + str(score[1]), score_font, RED, 580, 60)
         
+        pygame.mixer.music.unpause()
+        
         #update countdown 
         if intro_count <= 0:
                 fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_2, round_over, sword_fx)
                 fighter_2.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1, round_over, magic_fx)
+                 
         else:
             #display count timera
             draw_text(str(intro_count), count_font, RED, SCREEN_WIDHT / 2, SCREEN_HEIGHT / 3)
@@ -174,6 +180,8 @@ while run:
                 intro_count = 4
                 fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
                 fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
+    else:
+        pygame.mixer.music.pause()
     
     
     #update display
