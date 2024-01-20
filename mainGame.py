@@ -1,7 +1,7 @@
 import pygame
 from pygame import mixer
 from fighter import Fighter
-from menu import pauseMenu
+from pausemenu import pauseMenu
 from button import Button
 
 mixer.init()
@@ -105,7 +105,7 @@ play_button = Button(SCREEN_WIDHT/2 - 2 * play_button_img.get_width(), 170, play
 quit_button = Button(SCREEN_WIDHT/2 - 2 * play_button_img.get_width(), 300, quit_button_img, 4)
 
 #menu instanes
-menu1 = pauseMenu(False, RED, screen, play_button, quit_button, paused_menu_img, SCREEN_WIDHT, SCREEN_HEIGHT, pause_text_img)
+pause_Menu = pauseMenu(False, RED, screen, play_button, quit_button, paused_menu_img, SCREEN_WIDHT, SCREEN_HEIGHT, pause_text_img)
 
 #game loop
 run = True
@@ -119,15 +119,15 @@ while run:
             run = False
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_p:
-                menu1.paused = not menu1.paused
+                pause_Menu.paused = not pause_Menu.paused
                 
             
     #update menu state
-    menu1.update(run)
-    run = menu1.runt
+    pause_Menu.update(run)
+    run = pause_Menu.runt
     
     #check if the game is paused
-    if menu1.paused == False:
+    if pause_Menu.paused == False:
         
         #draw background
         draw_bg()
