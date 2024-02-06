@@ -36,10 +36,16 @@ WARRIOR_SIZE = 162
 WARRIOR_SCALE = 4
 WARRIOR_OFFSET = [72, 56]
 WARRIOR_DATA = [WARRIOR_SIZE, WARRIOR_SCALE, WARRIOR_OFFSET]
+
 WIZARD_SIZE = 250
 WIZARD_SCALE = 3
 WIZARD_OFFSET = [112, 107]
 WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
+
+MAINCHAR_SIZE = 200
+MAINCHAR_SCALE = 3
+MAINCHAR_OFFSET = [85, 63]
+MAINCHAR_DATA = [MAINCHAR_SIZE, MAINCHAR_SCALE, MAINCHAR_OFFSET]
 
 #Define menu variables
 
@@ -47,8 +53,6 @@ WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 #load music and sounds
 pygame.mixer.music.load("assets/audio/music.mp3")
 pygame.mixer.music.set_volume(0.5)
-pygame.mixer.music.play(-1, 0.0, 5000)
-pygame.mixer.music.pause()
 sword_fx = pygame.mixer.Sound("assets/audio/sword.wav")
 sword_fx.set_volume(0.5)
 magic_fx = pygame.mixer.Sound("assets/audio/magic.wav")
@@ -67,6 +71,7 @@ main_logo_img = pygame.image.load("assets/images/icons/logo.png").convert_alpha(
 #load spriitheets
 warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").convert_alpha()
 wizard_sheet = pygame.image.load("assets/images/wizard/Sprites/wizard.png").convert_alpha()
+mainchar_sheet = pygame.image.load("assets/images/samurai/Sprites/spritesheet.png").convert_alpha()
 
 #load victory image
 victory_img = pygame.image.load("assets/images/icons/victory.png").convert_alpha()
@@ -82,6 +87,7 @@ quitMain_button_img = pygame.image.load("assets/images/buttons/quitMain.png").co
 #define number of steps in each animation
 WARRIOR_ANIMATION_STEPS = [10, 8, 1, 7, 7, 3, 7]
 WIZARD_ANIMATION_STEPS = [8, 8, 1, 8, 8, 3, 7]
+MAINCHAR_ANIMATION_STEPS = [8, 8, 2, 6, 6, 4, 6]
 
 #define font
 count_font = pygame.font.Font("assets/fonts/turok.ttf", 80)
@@ -128,14 +134,6 @@ while run:
     
     clock.tick(FPS)
     
-    #event handler
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_p:
-                pause_Menu.paused = not pause_Menu.paused
-    
     main_menu.update(run)
     run = main_menu.runBool
     
@@ -155,8 +153,6 @@ while run:
             draw_health_bar(fighter_2.health, 580, 20)
             draw_text("P1: " + str(score[0]), score_font, RED, 20, 60)
             draw_text("P2: " + str(score[1]), score_font, RED, 580, 60)
-            
-            pygame.mixer.music.unpause()
             
             #update countdown 
             if intro_count <= 0:
@@ -198,11 +194,14 @@ while run:
                     intro_count = 4
                     fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
                     fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
-        else:
-            pygame.mixer.music.pause()
-    
-    else:
-        pygame.mixer.music.pause()
+
+        
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_p:
+                pause_Menu.paused = not pause_Menu.paused
     
     
     #update display

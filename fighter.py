@@ -57,10 +57,11 @@ class Fighter():
                 if key[pygame.K_d]:
                     dx = SPEED
                     self.running = True
-                #jumo
+                #jump
                 if key[pygame.K_w] and self.jump == False:
-                    self.vel_y = -30
                     self.jump = True
+                    self.vel_y = -30
+                    #self.jump = True
                 # attack
                 if key[pygame.K_r] or key[pygame.K_t]:
                     self.attack(target)
@@ -69,6 +70,8 @@ class Fighter():
                         self.attack_type = 1
                     elif key[pygame.K_t]:
                         self.attack_type = 2
+                        
+                        
             if self.player == 2:
             #movement
                 if key[pygame.K_LEFT]:
@@ -162,7 +165,7 @@ class Fighter():
                     self.hit = False
                     #if the player was in the middle of an attack, then the attack is stopped
                     self.attacking = False
-                    self.attack_cooldown = 20
+                    self.attack_cooldown = 30
     
     def attack(self, target):
         if self.attack_cooldown == 0:
@@ -184,4 +187,5 @@ class Fighter():
 
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)
+        pygame.draw.rect(surface, (255, 0, 0), self.rect)
         surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
