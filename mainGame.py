@@ -29,6 +29,7 @@ intro_count = 3
 last_count_update = pygame.time.get_ticks()
 score = [0, 0]#player scores pi and p2
 round_over = False
+clicked = False
 ROUND_OVER_COOLDOWN = 2000
 
 #Define fighter variables
@@ -62,6 +63,7 @@ magic_fx.set_volume(0.5)
 
 #load background image
 bg_image = pygame.image.load("assets/images/background/background.jpg").convert_alpha()
+settingsMainBg_image = pygame.image.load("assets/images/background/settingsMainBg.png").convert_alpha()
 paused_menu_img = pygame.image.load("assets/images/background/pauseMenuBg.png").convert_alpha()
 main_menu_img = pygame.image.load("assets/images/background/mainBg.png").convert_alpha()
 
@@ -81,8 +83,11 @@ pause_text_img = pygame.image.load("assets/images/icons/pauseText.png").convert_
 play_button_img = pygame.image.load("assets/images/buttons/play.png").convert_alpha()
 quit_button_img = pygame.image.load("assets/images/buttons/quit.png").convert_alpha()
 
-start_button_img = pygame.image.load("assets/images/buttons/start.png").convert_alpha()
+main_play_button_img = pygame.image.load("assets/images/buttons/playMain.png").convert_alpha()
 quitMain_button_img = pygame.image.load("assets/images/buttons/quitMain.png").convert_alpha()
+settingsMain_button_img = pygame.image.load("assets/images/buttons/settingsMain.png").convert_alpha()
+back_button_img = pygame.image.load("assets/images/buttons/back.png").convert_alpha()
+
 
 #define number of steps in each animation
 WARRIOR_ANIMATION_STEPS = [10, 8, 1, 7, 7, 3, 7]
@@ -116,17 +121,21 @@ fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANI
 fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
 
 #create button instances
-play_button = Button(SCREEN_WIDHT/2 - 2 * play_button_img.get_width(), 170, play_button_img, 4)
-quit_button = Button(SCREEN_WIDHT/2 - 2 * play_button_img.get_width(), 300, quit_button_img, 4)
+play_button = Button(SCREEN_WIDHT/2 - play_button_img.get_width()/2*0.6, 170, play_button_img, 0.6)
+quit_button = Button(SCREEN_WIDHT/2 - play_button_img.get_width()/2*0.6, 270, quit_button_img, 0.6)
 
-start_button = Button(SCREEN_WIDHT/2 - 2 * start_button_img.get_width(), 270, start_button_img, 4)
-quit_main_button = Button(SCREEN_WIDHT/2 - 2 * quitMain_button_img.get_width(), 400, quitMain_button_img, 4)
+back_button = Button(SCREEN_WIDHT/2 - back_button_img.get_width()/2*0.6, 270, back_button_img, 0.6)
+
+main_play_button = Button(SCREEN_WIDHT/2 - main_play_button_img.get_width()/2*0.6, 260, main_play_button_img, 0.6)
+quit_main_button = Button(SCREEN_WIDHT/2 - quitMain_button_img.get_width()/2*0.6, 460, quitMain_button_img, 0.6)
+settings_main_button = Button(SCREEN_WIDHT/2 - settingsMain_button_img.get_width()/2*0.6, 360, settingsMain_button_img, 0.6)
 
 #menu instanes
 pause_Menu = pauseMenu(False, RED, screen, play_button, quit_button, paused_menu_img, SCREEN_WIDHT, SCREEN_HEIGHT, pause_text_img)
 
 #Main menu instances
-main_menu = mainMenu(False, "Main", screen, RED, main_logo_img, start_button, quit_main_button, main_menu_img, SCREEN_HEIGHT, SCREEN_WIDHT, 0.5)
+main_menu = mainMenu(False, "Main", screen, RED, main_logo_img, main_play_button, quit_main_button, settings_main_button, 
+                     back_button, main_menu_img, settingsMainBg_image, SCREEN_HEIGHT, SCREEN_WIDHT, 0.5)
 
 #game loop
 run = True
@@ -134,8 +143,9 @@ while run:
     
     clock.tick(FPS)
     
-    main_menu.update(run)
+    main_menu.update(run, clicked)
     run = main_menu.runBool
+    clicked = main_menu.clicked
     
     if main_menu.playing == True:
         #update menu state
@@ -202,6 +212,8 @@ while run:
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_p:
                 pause_Menu.paused = not pause_Menu.paused
+        if event.type == pygame.MOUSEBUTTONUP:
+            clicked = False
     
     
     #update display
