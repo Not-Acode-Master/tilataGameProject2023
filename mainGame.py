@@ -58,6 +58,8 @@ sword_fx = pygame.mixer.Sound("assets/audio/sword.wav")
 sword_fx.set_volume(0.5)
 magic_fx = pygame.mixer.Sound("assets/audio/magic.wav")
 magic_fx.set_volume(0.5)
+button_fx = pygame.mixer.Sound("assets/audio/button.mp3")
+button_fx.set_volume(0.5)
 
 
 
@@ -69,7 +71,7 @@ main_menu_img = pygame.image.load("assets/images/background/mainBg.png").convert
 
 #load logo
 main_logo_img = pygame.image.load("assets/images/icons/logo.png").convert_alpha()
-
+keys_spritesheet_img = pygame.image.load("assets/images/icons/keys.png").convert_alpha()
 #load spriitheets
 warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").convert_alpha()
 wizard_sheet = pygame.image.load("assets/images/wizard/Sprites/wizard.png").convert_alpha()
@@ -82,11 +84,10 @@ pause_text_img = pygame.image.load("assets/images/icons/pauseText.png").convert_
 #load buttons with its instances
 play_button_img = pygame.image.load("assets/images/buttons/play.png").convert_alpha()
 quit_button_img = pygame.image.load("assets/images/buttons/quit.png").convert_alpha()
-
-main_play_button_img = pygame.image.load("assets/images/buttons/playMain.png").convert_alpha()
-quitMain_button_img = pygame.image.load("assets/images/buttons/quitMain.png").convert_alpha()
-settingsMain_button_img = pygame.image.load("assets/images/buttons/settingsMain.png").convert_alpha()
+settings_button_img = pygame.image.load("assets/images/buttons/settingsMain.png").convert_alpha()
 back_button_img = pygame.image.load("assets/images/buttons/back.png").convert_alpha()
+github_button_img = pygame.image.load("assets/images/buttons/github.png").convert_alpha()
+controls_button_img = pygame.image.load("assets/images/buttons/controls.png").convert_alpha()
 
 
 #define number of steps in each animation
@@ -97,6 +98,7 @@ MAINCHAR_ANIMATION_STEPS = [8, 8, 2, 6, 6, 4, 6]
 #define font
 count_font = pygame.font.Font("assets/fonts/turok.ttf", 80)
 score_font = pygame.font.Font("assets/fonts/turok.ttf", 30)
+setttings_font = pygame.font.Font("assets/fonts/turok.ttf", 60)
 
 #function for drawing text
 def draw_text(text, font, text_col, x, y):
@@ -120,22 +122,27 @@ def draw_health_bar(health, x, y):
 fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
 fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
 
-#create button instances
+#create button instances for pause menu
 play_button = Button(SCREEN_WIDHT/2 - play_button_img.get_width()/2*0.6, 170, play_button_img, 0.6)
 quit_button = Button(SCREEN_WIDHT/2 - play_button_img.get_width()/2*0.6, 270, quit_button_img, 0.6)
 
-back_button = Button(SCREEN_WIDHT/2 - back_button_img.get_width()/2*0.6, 270, back_button_img, 0.6)
+#create button instances for main menu
+back_button = Button(SCREEN_WIDHT/2 - back_button_img.get_width()/2*0.6, 460, back_button_img, 0.6)
+back_button_controls = Button(SCREEN_WIDHT/2 - back_button_img.get_width()/2*0.6, 460, back_button_img, 0.6)
 
-main_play_button = Button(SCREEN_WIDHT/2 - main_play_button_img.get_width()/2*0.6, 260, main_play_button_img, 0.6)
-quit_main_button = Button(SCREEN_WIDHT/2 - quitMain_button_img.get_width()/2*0.6, 460, quitMain_button_img, 0.6)
-settings_main_button = Button(SCREEN_WIDHT/2 - settingsMain_button_img.get_width()/2*0.6, 360, settingsMain_button_img, 0.6)
+main_play_button = Button(SCREEN_WIDHT/2 - play_button_img.get_width()/2*0.6, 260, play_button_img, 0.6)
+quit_main_button = Button(SCREEN_WIDHT/2 - quit_button_img.get_width()/2*0.6, 460, quit_button_img, 0.6)
+settings_main_button = Button(SCREEN_WIDHT/2 - settings_button_img.get_width()/2*0.6, 360, settings_button_img, 0.6)
+github_button = Button(SCREEN_WIDHT/2 - github_button_img.get_width()/2*0.6, 260, github_button_img, 0.6)
+controls_button = Button(SCREEN_WIDHT/2 - controls_button_img.get_width()/2*0.6, 360, controls_button_img, 0.6)
 
 #menu instanes
 pause_Menu = pauseMenu(False, RED, screen, play_button, quit_button, paused_menu_img, SCREEN_WIDHT, SCREEN_HEIGHT, pause_text_img)
 
 #Main menu instances
 main_menu = mainMenu(False, "Main", screen, RED, main_logo_img, main_play_button, quit_main_button, settings_main_button, 
-                     back_button, main_menu_img, settingsMainBg_image, SCREEN_HEIGHT, SCREEN_WIDHT, 0.5)
+                     back_button, github_button, controls_button, back_button_controls, main_menu_img, settingsMainBg_image, keys_spritesheet_img, button_fx,
+                     SCREEN_HEIGHT, SCREEN_WIDHT, 0.5)
 
 #game loop
 run = True
@@ -143,7 +150,7 @@ while run:
     
     clock.tick(FPS)
     
-    main_menu.update(run, clicked)
+    main_menu.update(run, clicked, setttings_font)
     run = main_menu.runBool
     clicked = main_menu.clicked
     
