@@ -3,7 +3,7 @@ import webbrowser
 
 class mainMenu():
     def __init__ (self, playing, mainMenuState, surface, color, logo, startButton, quitButton, setting_button, back_button, github_button, contrls_button, back_button_settings,
-                  char1_button, char2_button, bg_image, settingBg_image, keys_spritesheet_img, button_fx, screen_height, screen_width, scale):
+                  char1_button, char2_button, char3_button, bg_image, settingBg_image, keys_spritesheet_img, button_fx, screen_height, screen_width, scale):
         self.playing = playing
         self.menu_state = mainMenuState
         self.surface = surface
@@ -22,6 +22,7 @@ class mainMenu():
         self.screen_width = screen_width
         self.char1_button = char1_button
         self.char2_button = char2_button
+        self.char3_button = char3_button
         self.scale = scale
         self.key_list = self.upload_key_images(keys_spritesheet_img, 2.5)
         self.ORANGE = (255, 153, 8)
@@ -39,7 +40,7 @@ class mainMenu():
             key_list.append(dynamic_list)
         return key_list
         
-    def update(self, runBool, clicked, font):
+    def update(self, runBool, clicked, font, level):
         self.clicked = clicked
         self.runBool = runBool
         
@@ -71,11 +72,17 @@ class mainMenu():
                     self.button_fx.play()
                     self.clicked = True
                     self.charIndex = 1
-                elif self.char2_button.draw(self.surface) and self.clicked == False:
+                elif self.char2_button.draw(self.surface) and self.clicked == False and level > 1:
                     self.playing = True
                     self.button_fx.play()
                     self.clicked = True
                     self.charIndex = 2
+                
+                elif self.char3_button.draw(self.surface) and self.clicked == False and level > 2:
+                    self.playing = True
+                    self.button_fx.play()
+                    self.clicked = True
+                    self.charIndex = 1
                     
             elif self.menu_state == "Settings":
                 scaledSettingBg = pygame.transform.scale(self.settingBg, (self.screen_width, self.screen_height))

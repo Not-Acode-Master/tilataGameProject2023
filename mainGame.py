@@ -25,11 +25,12 @@ YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
 
 #define game variables
-intro_count = 3
+intro_count = 4
 last_count_update = pygame.time.get_ticks()
 score = [0, 0]#player scores pi and p2
 round_over = False
 clicked = False
+level = 1
 ROUND_OVER_COOLDOWN = 2000
 
 #Define fighter variables
@@ -96,6 +97,7 @@ github_button_img = pygame.image.load("assets/images/buttons/github.png").conver
 controls_button_img = pygame.image.load("assets/images/buttons/controls.png").convert_alpha()
 char1_button_img = pygame.image.load("assets/images/buttons/enemy1.png").convert_alpha()
 char2_button_img = pygame.image.load("assets/images/buttons/enemy2.png").convert_alpha()
+char3_button_img = pygame.image.load("assets/images/buttons/enemy3.png").convert_alpha()
 
 
 #define number of steps in each animation
@@ -129,13 +131,11 @@ def draw_health_bar(health, x, y):
     
 #create two instances of fighters
 fighter_1 = Fighter(1, 200, 310, False, MAN_DATA, man_sheet, MAN_ANIMATION_STEPS, sword_fx)
-
 fighter_2 = Fighter(2, 700, 310, True, SAMURAI_DATA, samurai_sheet, SAMURAI_ANIMATION_STEPS, sword_fx)
+fighter_3 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
 PLAYERS_COLLECTION = [[MAN_DATA, man_sheet, MAN_ANIMATION_STEPS], 
                       [SAMURAI_DATA, samurai_sheet, SAMURAI_ANIMATION_STEPS], 
-                      [SAMURAI_DATA, samurai_sheet, SAMURAI_ANIMATION_STEPS]]
-
-fighter_3 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
+                      [WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS]]
 
 players_list = [fighter_1, fighter_2, fighter_3]
 
@@ -152,15 +152,17 @@ quit_main_button = Button(SCREEN_WIDHT/2 - quit_button_img.get_width()/2*0.6, 46
 settings_main_button = Button(SCREEN_WIDHT/2 - settings_button_img.get_width()/2*0.6, 360, settings_button_img, 0.6)
 github_button = Button(SCREEN_WIDHT/2 - github_button_img.get_width()/2*0.6, 260, github_button_img, 0.6)
 controls_button = Button(SCREEN_WIDHT/2 - controls_button_img.get_width()/2*0.6, 360, controls_button_img, 0.6)
-char1_button = Button(SCREEN_WIDHT/3 - char1_button_img.get_width()*6, 260, char1_button_img, 6)
-char2_button = Button(SCREEN_WIDHT/2 - char2_button_img.get_width()/2, 260, char2_button_img, 6)
+char1_button = Button(SCREEN_WIDHT/3 - char1_button_img.get_width()/2, 260, char1_button_img, 6)
+char2_button = Button(SCREEN_WIDHT/3 * 2 - char2_button_img.get_width()/2, 260, char2_button_img, 6)
+char3_button = Button(SCREEN_WIDHT - char3_button_img.get_width()/2, 260, char3_button_img, 6)
 
 #menu instanes
 pause_Menu = pauseMenu(False, RED, screen, play_button, quit_button, paused_menu_img, SCREEN_WIDHT, SCREEN_HEIGHT, pause_text_img)
 
 #Main menu instances
 main_menu = mainMenu(False, "Main", screen, RED, main_logo_img, main_play_button, quit_main_button, settings_main_button, 
-                     back_button, github_button, controls_button, back_button_controls, char1_button, char2_button, main_menu_img, settingsMainBg_image, keys_spritesheet_img, button_fx,
+                     back_button, github_button, controls_button, back_button_controls, 
+                     char1_button, char2_button, char3_button, main_menu_img, settingsMainBg_image, keys_spritesheet_img, button_fx,
                      SCREEN_HEIGHT, SCREEN_WIDHT, 0.5)
 
 #game loop
@@ -169,7 +171,7 @@ while run:
     
     clock.tick(FPS)
     
-    main_menu.update(run, clicked, setttings_font)
+    main_menu.update(run, clicked, setttings_font, level)
     run = main_menu.runBool
     clicked = main_menu.clicked
     
@@ -192,8 +194,8 @@ while run:
             
             #update countdown 
             if intro_count <= 0:
-                    fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, players_list[main_menu.charIndex], round_over, sword_fx)
-                    players_list[main_menu.charIndex].move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1, round_over, magic_fx)
+                fighter_1.move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, players_list[main_menu.charIndex], round_over, sword_fx)
+                players_list[main_menu.charIndex].move(SCREEN_WIDHT, SCREEN_HEIGHT, screen, fighter_1, round_over, magic_fx)
                     
             else:
                 #display count timera
@@ -222,14 +224,7 @@ while run:
                     score[0] += 1
                     round_over = True
                     round_over_time = pygame.time.get_ticks()
-                ##if score[0] >= 1 or score[1] >= 1:
-                    ##main_menu.menu_state = "EnemySelection"
-                    ##main_menu.playing = False
-                    #score[0] = 0
-                    #score[1] = 0
-                    #players_list[main_menu.charIndex] = Fighter(2, 700, 310, True, PLAYERS_COLLECTION[main_menu.charIndex][0], 
-                                                                #PLAYERS_COLLECTION[main_menu.charIndex][1], 
-                                                               # PLAYERS_COLLECTION[main_menu.charIndex][2], magic_fx)
+                    
             else:
                 #display victory image
                 screen.blit(victory_img, (360, 150))
@@ -240,6 +235,12 @@ while run:
                     players_list[main_menu.charIndex] = Fighter(2, 700, 310, True, PLAYERS_COLLECTION[main_menu.charIndex][0], 
                                                                 PLAYERS_COLLECTION[main_menu.charIndex][1], 
                                                                 PLAYERS_COLLECTION[main_menu.charIndex][2], magic_fx)
+                    if score[0] >= 3 or score[1] >= 3:
+                        main_menu.playing = False
+                        score[0] = 0
+                        score[1] = 0
+                        if level < 3:
+                            level += 1
                     
         
     for event in pygame.event.get():
