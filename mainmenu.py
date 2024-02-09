@@ -3,7 +3,7 @@ import webbrowser
 
 class mainMenu():
     def __init__ (self, playing, mainMenuState, surface, color, logo, startButton, quitButton, setting_button, back_button, github_button, contrls_button, back_button_settings,
-                  bg_image, settingBg_image, keys_spritesheet_img, button_fx, screen_height, screen_width, scale):
+                  char1_button, char2_button, bg_image, settingBg_image, keys_spritesheet_img, button_fx, screen_height, screen_width, scale):
         self.playing = playing
         self.menu_state = mainMenuState
         self.surface = surface
@@ -20,11 +20,14 @@ class mainMenu():
         self.settingBg = settingBg_image
         self.screen_height = screen_height
         self.screen_width = screen_width
+        self.char1_button = char1_button
+        self.char2_button = char2_button
         self.scale = scale
         self.key_list = self.upload_key_images(keys_spritesheet_img, 2.5)
         self.ORANGE = (255, 153, 8)
         self.WHITE = (255, 255, 255)
         self.button_fx = button_fx
+        self.charIndex = 0
     
     def upload_key_images (self, sprite_sheet, scale):
         key_list = []
@@ -47,7 +50,8 @@ class mainMenu():
                 self.surface.blit(scaled_bg, (0, 0))
                 self.surface.blit(scaled_logo, (self.screen_width / 2 - scaled_logo.get_width() / 2, 0))
                 if self.start_button.draw(self.surface) and self.clicked == False:
-                    self.playing = True
+                    #self.playing = True
+                    self.menu_state = "EnemySelection"
                     self.button_fx.play()
                     self.clicked = True
                 elif self.settings_button.draw(self.surface) and self.clicked == False:
@@ -58,6 +62,20 @@ class mainMenu():
                     self.runBool = False
                     self.button_fx.play()
                     self.clicked = True
+            
+            elif self.menu_state == "EnemySelection":
+                scaledSettingBg = pygame.transform.scale(self.settingBg, (self.screen_width, self.screen_height))
+                self.surface.blit(scaledSettingBg, (0, 0))
+                if self.char1_button.draw(self.surface) and self.clicked == False:
+                    self.playing = True
+                    self.button_fx.play()
+                    self.clicked = True
+                    self.charIndex = 1
+                elif self.char2_button.draw(self.surface) and self.clicked == False:
+                    self.playing = True
+                    self.button_fx.play()
+                    self.clicked = True
+                    self.charIndex = 2
                     
             elif self.menu_state == "Settings":
                 scaledSettingBg = pygame.transform.scale(self.settingBg, (self.screen_width, self.screen_height))
@@ -95,12 +113,12 @@ class mainMenu():
         
     def blitKeycaps(self, font, xCoord, xCoord2):
         keyCoords = [[4, 3], [1, 2], [3, 6], [4, 4], [1, 4]]
-        keyCoords = [[2, 3], [2, 4], [2, 6], [0, 0], [0, 1]]
+        keyCoords1 = [[2, 3], [2, 4], [2, 6], [0, 0], [0, 1]]
         keyText = ["JUMP", "LEFT", "RIGHT", "ATTACK 1", "ATTACK 2"]
         for i in range(5):
             self.draw(xCoord, i*70 + 50, self.key_list[keyCoords[i][0]][keyCoords[i][1]], self.surface)
             self.draw_text(keyText[i], font, self.ORANGE, xCoord + 90 , i*70 + 50, self.surface)
-            self.draw(xCoord2, i*70 + 50, self.key_list[keyCoords[i][0]][keyCoords[i][1]], self.surface)
+            self.draw(xCoord2, i*70 + 50, self.key_list[keyCoords1[i][0]][keyCoords1[i][1]], self.surface)
             self.draw_text(keyText[i], font, self.ORANGE, xCoord2 + 90 , i*70 + 50, self.surface)
         
         
