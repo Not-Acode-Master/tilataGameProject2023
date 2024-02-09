@@ -45,7 +45,7 @@ WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 
 MAINCHAR_SIZE = 200
 MAINCHAR_SCALE = 3
-MAINCHAR_OFFSET = [85, 63]
+MAINCHAR_OFFSET = [85, 62]
 MAINCHAR_DATA = [MAINCHAR_SIZE, MAINCHAR_SCALE, MAINCHAR_OFFSET]
 
 #Define menu variables
@@ -119,7 +119,7 @@ def draw_health_bar(health, x, y):
     
     
 #create two instances of fighters
-fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
+fighter_1 = Fighter(1, 200, 310, False, MAINCHAR_DATA, mainchar_sheet, MAINCHAR_ANIMATION_STEPS, sword_fx)
 fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
 
 #create button instances for pause menu
@@ -209,9 +209,9 @@ while run:
                 if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
                     round_over = False
                     intro_count = 4
-                    fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_fx)
+                    fighter_1 = Fighter(1, 200, 310, False, MAINCHAR_DATA, mainchar_sheet, MAINCHAR_ANIMATION_STEPS, sword_fx)
                     fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
-
+                    
         
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
