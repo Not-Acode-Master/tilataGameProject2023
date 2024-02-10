@@ -1,9 +1,10 @@
 import pygame
-import webbrowser 
+import webbrowser
+from displayText import displaytext
 
 class mainMenu():
-    def __init__ (self, playing, mainMenuState, surface, color, logo, startButton, quitButton, setting_button, back_button, github_button, contrls_button, back_button_settings,
-                  char1_button, char2_button, char3_button, bg_image, settingBg_image, keys_spritesheet_img, button_fx, screen_height, screen_width, scale):
+    def __init__ (self, playing, mainMenuState, surface, color, logo, startButton, quitButton, setting_button, back_button, github_button, contrls_button, back_button_settings, back_button_charSelection, back_button_history,
+                  char1_button, char2_button, char3_button,  locked_padlock_img, unlocked_padlock_img, bg_image, settingBg_image, keys_spritesheet_img, button_fx, negative_fx ,screen_height, screen_width, scale):
         self.playing = playing
         self.menu_state = mainMenuState
         self.surface = surface
@@ -15,6 +16,8 @@ class mainMenu():
         self.github_button = github_button
         self.controls_button = contrls_button
         self.back_button_settings = back_button_settings
+        self.back_button_charSelction = back_button_charSelection
+        self.back_button_history = back_button_history
         self.logo = logo
         self.bg_image = bg_image
         self.settingBg = settingBg_image
@@ -23,11 +26,14 @@ class mainMenu():
         self.char1_button = char1_button
         self.char2_button = char2_button
         self.char3_button = char3_button
+        self.locked = locked_padlock_img
+        self.unlocked = unlocked_padlock_img
         self.scale = scale
         self.key_list = self.upload_key_images(keys_spritesheet_img, 2.5)
         self.ORANGE = (255, 153, 8)
         self.WHITE = (255, 255, 255)
         self.button_fx = button_fx
+        self.negative_fx = negative_fx
         self.charIndex = 0
     
     def upload_key_images (self, sprite_sheet, scale):
@@ -40,7 +46,7 @@ class mainMenu():
             key_list.append(dynamic_list)
         return key_list
         
-    def update(self, runBool, clicked, font, level):
+    def update(self, runBool, clicked, font, level, padlock_scale):
         self.clicked = clicked
         self.runBool = runBool
         
@@ -67,22 +73,46 @@ class mainMenu():
             elif self.menu_state == "EnemySelection":
                 scaledSettingBg = pygame.transform.scale(self.settingBg, (self.screen_width, self.screen_height))
                 self.surface.blit(scaledSettingBg, (0, 0))
+                self.draw_text("SELECT YOUR ENEMY", font, self.WHITE, self.screen_width/2 - 250, 0, self.surface)
+                for i in range(1, 4):
+                    if i <= level:
+                        img = pygame.transform.scale(self.unlocked, (padlock_scale, padlock_scale))
+                        self.surface.blit(img, (self.screen_width / 4 * i - img.get_width()/2, 460))
+                    else:
+                        img = pygame.transform.scale(self.locked, (padlock_scale, padlock_scale))
+                        self.surface.blit(img, (self.screen_width / 4 * i - img.get_width()/2, 460))
+                        
                 if self.char1_button.draw(self.surface) and self.clicked == False:
                     self.playing = True
                     self.button_fx.play()
                     self.clicked = True
                     self.charIndex = 1
-                elif self.char2_button.draw(self.surface) and self.clicked == False and level > 1:
-                    self.playing = True
-                    self.button_fx.play()
-                    self.clicked = True
-                    self.charIndex = 2
+                    
+                elif self.char2_button.draw(self.surface) and self.clicked == False:
+                    if level > 1:
+                        self.playing = True
+                        self.button_fx.play()
+                        self.clicked = True
+                        self.charIndex = 2
+                    else:
+                        self.clicked = True
+                        self.negative_fx.play()
                 
-                elif self.char3_button.draw(self.surface) and self.clicked == False and level > 2:
-                    self.playing = True
+                elif self.char3_button.draw(self.surface) and self.clicked == False:
+                    if level > 2:
+                        self.playing = True
+                        self.button_fx.play()
+                        self.clicked = True
+                        self.charIndex = 3
+                    else:
+                        self.clicked = True
+                        self.negative_fx.play()
+                
+                elif self.back_button_charSelction.draw(self.surface) and self.clicked == False:
+                    self.menu_state = "Main"
                     self.button_fx.play()
                     self.clicked = True
-                    self.charIndex = 1
+                
                     
             elif self.menu_state == "Settings":
                 scaledSettingBg = pygame.transform.scale(self.settingBg, (self.screen_width, self.screen_height))
@@ -113,6 +143,21 @@ class mainMenu():
                     self.menu_state = "Settings"
                     self.button_fx.play()
                     self.clicked = True
+            
+            elif self.menu_state == "History":
+                scaledSettingBg = pygame.transform.scale(self.settingBg, (self.screen_width, self.screen_height))
+                self.surface.blit(scaledSettingBg, (0, 0))
+                
+                if self.back_button_history.draw(self.surface) and self.clicked == False:
+                    self.menu_state = "EnemySelection"
+                    self.button_fx.play()
+                    self.clicked = True
+                
+                if level == 2:
+                    self.display_text(self.surface, "Hello \nHello", (10, 10), font, self.WHITE)
+                elif level == 3:
+                    self.display_text(self.surface, "Bye \nBye", (10, 10), font, self.WHITE)
+                
                     
     def draw_text(self, text, font, text_col, x, y, surface):
         img = font.render(text, True, text_col)
@@ -128,7 +173,21 @@ class mainMenu():
             self.draw(xCoord2, i*70 + 50, self.key_list[keyCoords1[i][0]][keyCoords1[i][1]], self.surface)
             self.draw_text(keyText[i], font, self.ORANGE, xCoord2 + 90 , i*70 + 50, self.surface)
         
-        
+    def display_text(self, surface, text, pos, font, color):
+        collection = [word.split(' ') for word in text.splitlines()]
+        space = font.size(' ')[0]
+        x,y = pos
+        for lines in collection:
+            for words in lines:
+                word_surface = font.render(words, True, color)
+                word_width , word_height = word_surface.get_size()
+                if x + word_width >= 800:
+                    x = pos[0]
+                    y += word_height
+                surface.blit(word_surface, (x,y))
+                x += word_width + space
+            x = pos[0]
+            y += word_height
     
     def draw(self, x, y, img, surface):
         surface.blit(img, (x, y))

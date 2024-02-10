@@ -4,6 +4,7 @@ from fighter import Fighter
 from pausemenu import pauseMenu
 from button import Button
 from mainmenu import mainMenu
+from displayText import displaytext
 
 mixer.init()
 pygame.init()
@@ -49,10 +50,20 @@ SAMURAI_SCALE = 3
 SAMURAI_OFFSET = [85, 62]
 SAMURAI_DATA = [SAMURAI_SIZE, SAMURAI_SCALE, SAMURAI_OFFSET]
 
+KNIGHTROBOT_SIZE = 180
+KNIGHTROBOT_SCALE = 3.25
+KNIGHTROBOT_OFFSET = [72, 58]
+KNIGHTROBOT_DATA = [KNIGHTROBOT_SIZE, KNIGHTROBOT_SCALE, KNIGHTROBOT_OFFSET]
+
+
 MAN_SIZE = 150
 MAN_SCALE = 4
 MAN_OFFSET = [65, 50]
 MAN_DATA = [MAN_SIZE, MAN_SCALE, MAN_OFFSET]
+
+MAN_OFFSET2 = [65, 50]
+MAN_DATA2 = [MAN_SIZE, MAN_SCALE, MAN_OFFSET2]
+
 
 #Define menu variables
 
@@ -66,6 +77,8 @@ magic_fx = pygame.mixer.Sound("assets/audio/magic.wav")
 magic_fx.set_volume(0.5)
 button_fx = pygame.mixer.Sound("assets/audio/button.mp3")
 button_fx.set_volume(0.5)
+negative_fx = pygame.mixer.Sound("assets/audio/negative.mp3")
+negative_fx.set_volume(0.5)
 
 
 
@@ -83,10 +96,13 @@ warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").c
 wizard_sheet = pygame.image.load("assets/images/wizard/Sprites/wizard.png").convert_alpha()
 samurai_sheet = pygame.image.load("assets/images/samurai/Sprites/spritesheet.png").convert_alpha()
 man_sheet = pygame.image.load("assets/images/mainChar/Sprites/spritesheet.png").convert_alpha()
+knightRobot_sheet = pygame.image.load("assets/images/knigthRobot/Sprites/spritesheet.png").convert_alpha()
 
 #load victory image
 victory_img = pygame.image.load("assets/images/icons/victory.png").convert_alpha()
 pause_text_img = pygame.image.load("assets/images/icons/pauseText.png").convert_alpha()
+locked_padlock_img = pygame.image.load("assets/images/icons/locked.png").convert_alpha()
+unlocked_padlock_img = pygame.image.load("assets/images/icons/unlocked.png").convert_alpha()
 
 #load buttons with its instances
 play_button_img = pygame.image.load("assets/images/buttons/play.png").convert_alpha()
@@ -105,6 +121,7 @@ WARRIOR_ANIMATION_STEPS = [10, 8, 1, 7, 7, 3, 7]
 WIZARD_ANIMATION_STEPS = [8, 8, 1, 8, 8, 3, 7]
 SAMURAI_ANIMATION_STEPS = [8, 8, 2, 6, 6, 4, 6]
 MAN_ANIMATION_STEPS = [8, 8, 2, 4, 4, 4, 6]
+KNIGHTROBOT_ANIMATION_STEPS = [11, 8, 3, 7, 7, 4, 11]
 
 #define font
 count_font = pygame.font.Font("assets/fonts/turok.ttf", 80)
@@ -132,12 +149,15 @@ def draw_health_bar(health, x, y):
 #create two instances of fighters
 fighter_1 = Fighter(1, 200, 310, False, MAN_DATA, man_sheet, MAN_ANIMATION_STEPS, sword_fx)
 fighter_2 = Fighter(2, 700, 310, True, SAMURAI_DATA, samurai_sheet, SAMURAI_ANIMATION_STEPS, sword_fx)
-fighter_3 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_fx)
+fighter_3 = Fighter(2, 700, 310, True, KNIGHTROBOT_DATA, knightRobot_sheet, KNIGHTROBOT_ANIMATION_STEPS, sword_fx)
+fighter_4 = Fighter(2, 700, 310, True, MAN_DATA2, man_sheet, MAN_ANIMATION_STEPS, sword_fx)
+
 PLAYERS_COLLECTION = [[MAN_DATA, man_sheet, MAN_ANIMATION_STEPS], 
                       [SAMURAI_DATA, samurai_sheet, SAMURAI_ANIMATION_STEPS], 
-                      [WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS]]
+                      [KNIGHTROBOT_DATA, knightRobot_sheet, KNIGHTROBOT_ANIMATION_STEPS],
+                      [MAN_DATA2, man_sheet, MAN_ANIMATION_STEPS]]
 
-players_list = [fighter_1, fighter_2, fighter_3]
+players_list = [fighter_1, fighter_2, fighter_3, fighter_4]
 
 #create button instances for pause menu
 play_button = Button(SCREEN_WIDHT/2 - play_button_img.get_width()/2*0.6, 170, play_button_img, 0.6)
@@ -146,23 +166,25 @@ quit_button = Button(SCREEN_WIDHT/2 - play_button_img.get_width()/2*0.6, 270, qu
 #create button instances for main menu
 back_button = Button(SCREEN_WIDHT/2 - back_button_img.get_width()/2*0.6, 460, back_button_img, 0.6)
 back_button_controls = Button(SCREEN_WIDHT/2 - back_button_img.get_width()/2*0.6, 460, back_button_img, 0.6)
+back_button_charSelection =  Button(10, 10, back_button_img, 0.6)
+back_button_history = Button(SCREEN_WIDHT/2 - back_button_img.get_width()/2*0.6, 460, back_button_img, 0.6)
 
 main_play_button = Button(SCREEN_WIDHT/2 - play_button_img.get_width()/2*0.6, 260, play_button_img, 0.6)
 quit_main_button = Button(SCREEN_WIDHT/2 - quit_button_img.get_width()/2*0.6, 460, quit_button_img, 0.6)
 settings_main_button = Button(SCREEN_WIDHT/2 - settings_button_img.get_width()/2*0.6, 360, settings_button_img, 0.6)
 github_button = Button(SCREEN_WIDHT/2 - github_button_img.get_width()/2*0.6, 260, github_button_img, 0.6)
 controls_button = Button(SCREEN_WIDHT/2 - controls_button_img.get_width()/2*0.6, 360, controls_button_img, 0.6)
-char1_button = Button(SCREEN_WIDHT/3 - char1_button_img.get_width()/2, 260, char1_button_img, 6)
-char2_button = Button(SCREEN_WIDHT/3 * 2 - char2_button_img.get_width()/2, 260, char2_button_img, 6)
-char3_button = Button(SCREEN_WIDHT - char3_button_img.get_width()/2, 260, char3_button_img, 6)
+char1_button = Button(SCREEN_WIDHT/4 - char1_button_img.get_width()/2 * 6, 260, char1_button_img, 6)
+char2_button = Button(SCREEN_WIDHT/2  - char2_button_img.get_width()/2 * 6, 260, char2_button_img, 6)
+char3_button = Button(SCREEN_WIDHT/4 * 3 - char3_button_img.get_width()/2 * 6, 260, char3_button_img, 6)
 
 #menu instanes
 pause_Menu = pauseMenu(False, RED, screen, play_button, quit_button, paused_menu_img, SCREEN_WIDHT, SCREEN_HEIGHT, pause_text_img)
 
 #Main menu instances
 main_menu = mainMenu(False, "Main", screen, RED, main_logo_img, main_play_button, quit_main_button, settings_main_button, 
-                     back_button, github_button, controls_button, back_button_controls, 
-                     char1_button, char2_button, char3_button, main_menu_img, settingsMainBg_image, keys_spritesheet_img, button_fx,
+                     back_button, github_button, controls_button, back_button_controls, back_button_charSelection, back_button_history,
+                     char1_button, char2_button, char3_button, locked_padlock_img, unlocked_padlock_img, main_menu_img, settingsMainBg_image, keys_spritesheet_img, button_fx, negative_fx,
                      SCREEN_HEIGHT, SCREEN_WIDHT, 0.5)
 
 #game loop
@@ -171,7 +193,7 @@ while run:
     
     clock.tick(FPS)
     
-    main_menu.update(run, clicked, setttings_font, level)
+    main_menu.update(run, clicked, setttings_font, level, 90)
     run = main_menu.runBool
     clicked = main_menu.clicked
     
@@ -236,6 +258,7 @@ while run:
                                                                 PLAYERS_COLLECTION[main_menu.charIndex][1], 
                                                                 PLAYERS_COLLECTION[main_menu.charIndex][2], magic_fx)
                     if score[0] >= 3 or score[1] >= 3:
+                        main_menu.menu_state = "History"
                         main_menu.playing = False
                         score[0] = 0
                         score[1] = 0
